@@ -1,7 +1,7 @@
 # class MyValidator < ActiveModel::Validator
-#   def validate(record, attribute, value)
-#     unless Account::password::
-#       account.errors.add :password, "Password must include atleast 1 number"
+#   def validate(record)
+#     unless record.password.match(/\d/)
+#       record.errors.add :password, "Password must include atleast 1 number"
 #     end
 #   end
 # end
@@ -13,5 +13,14 @@ class Account < ApplicationRecord
   validates :username, uniqueness: true
   validates :password, length: { minimum: 6 }
   validates :password, uniqueness: true
-  validates_with MyValidator
+  validate :validate
+
+  def validate
+    if password.nil?
+       errors.add :password, "can't be blank"
+    else
+
+      errors.add(:password, "Password must include atleast 1 number") unless password.match(/\d/)
+    end
+  end
 end
